@@ -2,18 +2,19 @@ package com.shop;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DAO {
     private Connection connection;
 
-    public DAO(Connection connection) {
-        this.connection = connection;
+    public DAO() {
+        connection = DBUtil.getConnection();
     }
 
     public String addSong(Song song) {
         try {
             PreparedStatement preparedStatement = connection
-                    .prepareStatement("INSERT INTO public.song (idSong, nameSong, duration) values (?, ?, ?)");
+                    .prepareStatement("INSERT INTO public.song (id_song, title_song, duration) values (?, ?, ?)");
             preparedStatement.setInt(1, song.getIdSong());
             preparedStatement.setString(2, song.getNameSong());
             preparedStatement.setInt(3, song.getDuration());
@@ -28,7 +29,7 @@ public class DAO {
     public String addAlbom(Albom albom) {
         try {
             PreparedStatement preparedStatement = connection
-                    .prepareStatement("INSERT INTO public.albom (idAlbom, nameAlbom, style) values (?, ?, ?)");
+                    .prepareStatement("INSERT INTO public.albom (id_albom, title_albom, genre_albom) values (?, ?, ?)");
             preparedStatement.setInt(1, albom.getIdAlbom());
             preparedStatement.setString(2, albom.getNameAlbom());
             preparedStatement.setString(3, albom.getStyle());
@@ -40,12 +41,12 @@ public class DAO {
         }
     }
 
-    public String addSingler(Singler singler) {
+    public String addSinger(Singer singer) {
         try {
             PreparedStatement preparedStatement = connection
-                    .prepareStatement("INSERT INTO public.song (idSingler, name) values (?, ?)");
-            preparedStatement.setInt(1, singler.getIdSingler());
-            preparedStatement.setString(2, singler.getName());
+                    .prepareStatement("INSERT INTO public.singer (id_singler, name) values (?, ?)");
+            preparedStatement.setInt(1, singer.getIdSingler());
+            preparedStatement.setString(2, singer.getName());
             preparedStatement.execute();
             return "Успешно";
         } catch (SQLException e) {
@@ -56,7 +57,7 @@ public class DAO {
 
     public String deleteSong(int id) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("delete from public.Song where idSong=?");
+            PreparedStatement preparedStatement = connection.prepareStatement("delete from public.song where id_song=?");
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
             return "Успешно";
@@ -68,7 +69,7 @@ public class DAO {
 
     public String deleteAlbom(int id) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("delete from public.Albom where idAlbom=?");
+            PreparedStatement preparedStatement = connection.prepareStatement("delete from public.albom where id_albom=?");
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
             return "Успешно";
@@ -78,9 +79,9 @@ public class DAO {
         }
     }
 
-    public String deleteSingler(int id) {
+    public String deleteSinger(int id) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("delete from public.Singler where idSingler=?");
+            PreparedStatement preparedStatement = connection.prepareStatement("delete from public.singer where id_singer=?");
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
             return "Успешно";
@@ -93,7 +94,7 @@ public class DAO {
     public String updateSong(Song song) {
         try {
             PreparedStatement preparedStatement = connection
-                    .prepareStatement("update Song set nameSong = ?, duration = ? where idSong = ?");
+                    .prepareStatement("update song set title_song = ?, duration = ? where id_song = ?");
             preparedStatement.setString(1, song.getNameSong());
             preparedStatement.setInt(2, song.getDuration());
             preparedStatement.execute();
@@ -107,7 +108,7 @@ public class DAO {
     public String updateAlbom(Albom albom) {
         try {
             PreparedStatement preparedStatement = connection
-                    .prepareStatement("update Albom set nameAlbom = ?, style = ? where idAlbom = ?");
+                    .prepareStatement("update albom set title_albom = ?, genre_albom = ? where id_albom = ?");
             preparedStatement.setString(1, albom.getNameAlbom());
             preparedStatement.setString(2, albom.getStyle());
             preparedStatement.execute();
@@ -118,11 +119,11 @@ public class DAO {
         }
     }
 
-    public String updateSingler(Singler singler) {
+    public String updateSingler(Singer singer) {
         try {
             PreparedStatement preparedStatement = connection
-                    .prepareStatement("update Singler set name = ? where idSingler = ?");
-            preparedStatement.setString(1, singler.getName());
+                    .prepareStatement("update singer set name = ? where id_singler = ?");
+            preparedStatement.setString(1, singer.getName());
             preparedStatement.execute();
             return "Успешно";
         } catch (SQLException e) {
@@ -135,7 +136,7 @@ public class DAO {
         ArrayList<Song> songs = new ArrayList<Song>();
         try {
             Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("select * from Song");
+            ResultSet rs = statement.executeQuery("select * from song");
             while (rs.next()) {
                 Song song = new Song();
                 song.setIdSong(rs.getInt(1));
@@ -153,7 +154,7 @@ public class DAO {
         ArrayList<Albom> alboms = new ArrayList<Albom>();
         try {
             Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("select * from Albom");
+            ResultSet rs = statement.executeQuery("select * from albom");
             while (rs.next()) {
                 Albom albom = new Albom();
                 albom.setIdAlbom(rs.getInt(1));
@@ -167,22 +168,37 @@ public class DAO {
         return alboms;
     }
 
-    public ArrayList<Singler> getAllSingler() {
-        ArrayList<Singler> singlers = new ArrayList<Singler>();
+    public ArrayList<Singer> getAllSingler() {
+        ArrayList<Singer> singers = new ArrayList<Singer>();
         try {
             Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("select * from Singler");
+            ResultSet rs = statement.executeQuery("select * from singer");
             while (rs.next()) {
-                Singler singler = new Singler();
-                singler.setIdSingler(rs.getInt(1));
-                singler.setName(rs.getString(2));
-                singlers.add(singler);
+                Singer singer = new Singer();
+                singer.setIdSingler(rs.getInt(1));
+                singer.setName(rs.getString(2));
+                singers.add(singer);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return singlers;
+        return singers;
     }
 
+    public static void main(String[] args) {
+        DAO dao = new DAO();
+        List<Song> songs = dao.getAllSong();
+        List<Albom> alboms = dao.getAllAlboms();
+        List<Singer> singers = dao.getAllSingler();
+        /*for (Animal animal : animals) {
+            System.out.println(animal);
+        }
+        for (Employer employer : employers) {
+            System.out.println(employer);
+        }
+        for (Aviary aviary : avians) {
+            System.out.println(aviary);
+        }*/
+    }
 
 }

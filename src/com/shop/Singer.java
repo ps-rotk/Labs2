@@ -1,18 +1,18 @@
 package com.shop;
 
-public class Singler {
+public class Singer {
     private int idSingler;
     private String name;
 
-    public Singler(){
+    public Singer(){
     }
 
-    public Singler( int idSingler, String name){
+    public Singer(int idSingler, String name){
         this.idSingler = idSingler;
         this.name = name;
     }
 
-    public Singler(String name){
+    public Singer(String name){
         this.name = name;
     }
 
